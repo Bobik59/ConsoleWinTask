@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Linq.Expressions;
 
 namespace ConsoleWinTask
 {
@@ -141,15 +142,46 @@ namespace ConsoleWinTask
 
         public class Task4 : IMenuItem
         {
+            static int[] mass;
             public string Name => "4. работа с массивом";
 
-            public void Execute()
+            public async void Execute()
             {
-                Console.WriteLine("Введите размер массива: ");
-                int num = int.Parse(Console.ReadLine());
-                int[] mass = new int[num];
-                int[] result = array.Distinct().ToArray();
+                CreateMass();
 
+                var task = new Task(() => DisctitMass());
+                var task1 = task.ContinueWith(t => SortMass());
+                var task2 = task1.ContinueWith(t => Binar());
+
+                task.Start();
+
+                task2.Wait();
+            }
+            static void SortMass()
+            {
+                Array.Sort(mass);
+            }
+
+            static int[] DisctitMass()
+            {
+                return mass.Distinct().ToArray();
+            }
+
+            static void Binar()
+            {
+                Console.WriteLine("число для поиска");
+                int k = int.Parse(Console.ReadLine());
+                int u = mass.ToList().BinarySearch(k);
+                Console.WriteLine($"место: {u}");
+            }
+            static void CreateMass()
+            {
+                Console.Write("Введите целое число больше нуля: ");
+                int num = int.Parse(Console.ReadLine());
+                mass = new int[num];
+                Random rnd = new Random();
+                for (int i = 0; i < num; i++)
+                    mass[i] = rnd.Next(0, 100);
             }
         }
     }
