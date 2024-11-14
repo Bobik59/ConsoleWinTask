@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections;
 
 
 namespace ConsoleWinTask
@@ -76,36 +77,53 @@ namespace ConsoleWinTask
         }
         public class Task2 : IMenuItem
         {
+            static SortedList<int, List<string>> sortedList = new SortedList<int, List<string>>();
+
             public string Name => "Задание 3: таблица умножения";
 
             public void Execute()
             {
-                List<int> list = new List<int>();
                 Console.WriteLine("Введите даипозон:");
                 Console.Write("1 число:");
                 int num1 = int.Parse(Console.ReadLine());
                 Console.Write("2 число:");
                 int num2 = int.Parse(Console.ReadLine());
 
-                for(int i = num1; i < num2 + 1; i++)
-                {
-                    list.Add(i);
-                }
 
 
-                Parallel.ForEach(list, item =>
+                Parallel.For(num1, num2 + 1, item =>
                 {
-                    Multiplikationstabelle(item);
+                    List<string> table = Multiplikationstabelle(item);
+                    lock (sortedList)
+                    {
+                        sortedList.Add(item, table);
+                    }
                 });
+
+                WriteFile("C:\\Users\\top_acdemy_student\\Desktop\\таблица умн.txt");
+
             }
 
-            static void Multiplikationstabelle(int item)
+            static void WriteFile(string Path)
             {
-                for(int i = 0; i < 10; i++)
+                using (StreamWriter writer = new StreamWriter(Path))
                 {
-                    Console.WriteLine($"{item} * {i} = {item * i}");
+                    foreach (var entry in sortedList)
+                    {
+                        writer.Write($"Key {entry.Key}: ");
+                        writer.WriteLine(string.Join(", ", entry.Value));
+                    }
                 }
-                Console.WriteLine();
+            }
+
+            static List<string> Multiplikationstabelle(int item)
+            {
+                List<string> table = new List<string>();
+                for (int i = 1; i <= 10; i++)
+                {
+                    table.Add($"{item} * {i} = {item * i}");
+                }
+                return table;
             }
         }
     }
