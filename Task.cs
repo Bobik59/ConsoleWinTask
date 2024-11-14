@@ -12,7 +12,7 @@ namespace ConsoleWinTask
     {
         public class Task1 : IMenuItem
         {
-            public string Name => "Задание 1: Ожидание завершения процесса";
+            public string Name => "Задание 1: Ожидание завершения процеса";
 
             public void Execute()
             {
