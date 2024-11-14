@@ -8,86 +8,96 @@ using System.Diagnostics;
 
 namespace ConsoleWinTask
 {
-    internal class Task
+    internal class Tasks
     {
         public class Task1 : IMenuItem
         {
-            public string Name => "Задание 1: Ожидание завершения процесса";
+            static CancellationTokenSource cts = new CancellationTokenSource();
+            static CancellationToken token = cts.Token;
+            public string Name => "Задание 1: Теория урока";
 
             public void Execute()
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
+                try
+                {
+                    var task = Task.Run(() => Print());
 
-                var process = Process.Start(processName);
-                process.WaitForExit();
+                    Thread.Sleep(1000);
+                    cts.Cancel();
+                    task.Wait();
+                    cts.Dispose();
+                }
+                catch (Exception oc)
+                {
+                    Console.WriteLine(oc.Message);
+                }
+                finally
+                {
+                    cts.Dispose();
+                }
+            }
 
-                Console.WriteLine($"Процесс завершен с кодом: {process.ExitCode}");
+            static void Print()
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    if (token.IsCancellationRequested)
+                        //return;
+                        token.ThrowIfCancellationRequested(); // ошибку пробросили
+                    Console.WriteLine($"Task! {Task.CurrentId} {i}");
+                    Thread.Sleep(10);
+                }
             }
         }
         public class Task2 : IMenuItem
         {
-            public string Name => "Задание 2: Ожидание или принудительное завершение процесса";
+            public string Name => "Задание 2: class Parallel";
 
             public void Execute()
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
+                Parallel.Invoke(
+                    () => { Console.WriteLine("Hello, World!"); },
+                    () => Sum(5, 6),
+                    Print
+                    );
 
-                var process = System.Diagnostics.Process.Start(processName);
 
-                Console.WriteLine("Нажмите 'W' для ожидания завершения или 'K' для завершения процесса.");
-                var key = Console.ReadKey(intercept: true).Key;
-
-                if (key == ConsoleKey.W)
+                Parallel.For(1, 16, x =>
                 {
-                    process.WaitForExit();
-                    Console.WriteLine($"\nПроцесс завершен с кодом: {process.ExitCode}");
-                }
-                else if (key == ConsoleKey.K)
+                    for (int i = 0; i < 100; i++)
+                    {
+                        Console.WriteLine(x);
+                        Thread.Sleep(100);
+                    }
+                });
+
+                Parallel.ForEach(new List<int> { 1, 2, 3, 4, 5 }, item =>
                 {
-                    process.Kill();
-                    Console.WriteLine("\nПроцесс был завершен принудительно.");
+                    PrintItem(item);
+                });
+
+
+            }
+
+            static void PrintItem(int item)
+            {
+                Console.WriteLine($"Processing item: {item}");
+            }
+
+            static void Print(int a, ParallelLoopState parallelLoop)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    Console.WriteLine($"Task! {Task.CurrentId} {i}");
+                    Thread.Sleep(10);
                 }
             }
-        }
-
-        public class Task3 : IMenuItem
-        {
-            public string Name => "Задание 3: Запуск процесса с аргументами для операции";
-
-            public void Execute()
+            static void Sum(int u, int a)
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
-                Console.Write("Введите первое число: ");
-                string number1 = Console.ReadLine();
-                Console.Write("Введите второе число: ");
-                string number2 = Console.ReadLine();
-                Console.Write("Введите операцию (+, -, *, /): ");
-                string operation = Console.ReadLine();
-
-                var process = System.Diagnostics.Process.Start(processName, $"{number1} {number2} {operation}");
-                process.WaitForExit();
+                Console.WriteLine($"{u} + {a} = {a + u}");
             }
-        }
 
-        public class Task4 : IMenuItem
-        {
-            public string Name => "Задание 4: Поиск слова в файле";
-
-            public void Execute()
-            {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
-                Console.Write("Введите путь к файлу: ");
-                string filePath = Console.ReadLine();
-                Console.Write("Введите слово для поиска: ");
-                string word = Console.ReadLine();
-
-                var process = System.Diagnostics.Process.Start(processName, $"{filePath} {word}");
-                process.WaitForExit();
-            }
         }
     }
 }
+
