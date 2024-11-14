@@ -12,17 +12,11 @@ namespace ConsoleWinTask
     {
         public class Task1 : IMenuItem
         {
-            public string Name => "Задание 1: Ожидание завершения процесса";
+            public string Name => "Задание 1: факториал числа через Patallel class";
 
             public void Execute()
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
 
-                var process = Process.Start(processName);
-                process.WaitForExit();
-
-                Console.WriteLine($"Процесс завершен с кодом: {process.ExitCode}");
             }
         }
         public class Task2 : IMenuItem
