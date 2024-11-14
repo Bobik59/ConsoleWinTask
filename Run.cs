@@ -15,8 +15,6 @@ namespace ConsoleWinTask
             {
                 new Task1(),
                 new Task2(),
-                new Task3(),
-                new Task4()
             });
 
             menu.Execute();

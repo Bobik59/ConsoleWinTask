@@ -76,45 +76,36 @@ namespace ConsoleWinTask
         }
         public class Task2 : IMenuItem
         {
-            
-
-        }
-
-        public class Task3 : IMenuItem
-        {
-            public string Name => "Задание 3: Запуск процесса с аргументами для операции";
+            public string Name => "Задание 3: таблица умножения";
 
             public void Execute()
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
-                Console.Write("Введите первое число: ");
-                string number1 = Console.ReadLine();
-                Console.Write("Введите второе число: ");
-                string number2 = Console.ReadLine();
-                Console.Write("Введите операцию (+, -, *, /): ");
-                string operation = Console.ReadLine();
+                List<int> list = new List<int>();
+                Console.WriteLine("Введите даипозон:");
+                Console.Write("1 число:");
+                int num1 = int.Parse(Console.ReadLine());
+                Console.Write("2 число:");
+                int num2 = int.Parse(Console.ReadLine());
 
-                var process = System.Diagnostics.Process.Start(processName, $"{number1} {number2} {operation}");
-                process.WaitForExit();
+                for(int i = num1; i < num2 + 1; i++)
+                {
+                    list.Add(i);
+                }
+
+
+                Parallel.ForEach(list, item =>
+                {
+                    Multiplikationstabelle(item);
+                });
             }
-        }
 
-        public class Task4 : IMenuItem
-        {
-            public string Name => "Задание 4: Поиск слова в файле";
-
-            public void Execute()
+            static void Multiplikationstabelle(int item)
             {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
-                Console.Write("Введите путь к файлу: ");
-                string filePath = Console.ReadLine();
-                Console.Write("Введите слово для поиска: ");
-                string word = Console.ReadLine();
-
-                var process = System.Diagnostics.Process.Start(processName, $"{filePath} {word}");
-                process.WaitForExit();
+                for(int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine($"{item} * {i} = {item * i}");
+                }
+                Console.WriteLine();
             }
         }
     }
