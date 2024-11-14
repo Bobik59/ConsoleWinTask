@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ConsoleWinTask.Task;
+using static ConsoleWinTask.Tasks;
 
 namespace ConsoleWinTask
 {

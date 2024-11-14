@@ -8,42 +8,76 @@ using System.Diagnostics;
 
 namespace ConsoleWinTask
 {
-    internal class Task
+    internal class Tasks
     {
         public class Task1 : IMenuItem
         {
-            public string Name => "Задание 1: факториал числа через Patallel class";
+            public string Name => "Задание 1, 2: факториал числа через Patallel class";
 
             public void Execute()
             {
+                Console.WriteLine("число для подсчета");
+                int a = int.Parse(Console.ReadLine());
+                Parallel.Invoke(
+                    () => PrintFact(a),
+                    () => PrintSumDigits(a),
+                    () => PrintCountDigits(a)
+                    );
+            }
 
+            public static void PrintFact(int a)
+            {
+
+                Console.WriteLine($"факториал: {Fact(a)}");
+            }
+
+            public static void PrintSumDigits(int a)
+            {
+                Console.WriteLine($"summa: {SumDigits(a)}");
+            }
+
+            public static void PrintCountDigits(int a)
+            {
+                Console.WriteLine($"чисел в числе: {CountDigits(a)}");
+            }
+
+            static int CountDigits(int number)
+            {
+                int count = 0;
+                number = Math.Abs(number);
+                while (number > 0)
+                {
+                    count++;
+                    number /= 10;
+                }
+                return count;
+            }
+
+            static int SumDigits(int number)
+            {
+                int sum = 0;
+                number = Math.Abs(number);
+                while (number > 0)
+                {
+                    sum += number % 10;
+                    number /= 10;
+                }
+                return sum;
+            }
+
+
+            public static long Fact(long n)
+            {
+                if (n == 0)
+                    return 1;
+                else
+                    return n * Fact(n - 1);
             }
         }
         public class Task2 : IMenuItem
         {
-            public string Name => "Задание 2: Ожидание или принудительное завершение процесса";
+            
 
-            public void Execute()
-            {
-                Console.Write("Введите имя запускаемого процесса: ");
-                string processName = Console.ReadLine();
-
-                var process = System.Diagnostics.Process.Start(processName);
-
-                Console.WriteLine("Нажмите 'W' для ожидания завершения или 'K' для завершения процесса.");
-                var key = Console.ReadKey(intercept: true).Key;
-
-                if (key == ConsoleKey.W)
-                {
-                    process.WaitForExit();
-                    Console.WriteLine($"\nПроцесс завершен с кодом: {process.ExitCode}");
-                }
-                else if (key == ConsoleKey.K)
-                {
-                    process.Kill();
-                    Console.WriteLine("\nПроцесс был завершен принудительно.");
-                }
-            }
         }
 
         public class Task3 : IMenuItem
